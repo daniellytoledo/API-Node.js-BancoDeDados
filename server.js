@@ -33,6 +33,76 @@ app.use((req, res, next) => {
     next();
 });
 
+// rotas com parametro primeiro
+
+// GET por ID específico
+app.get('/usuarios/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('Buscando usuário com ID:', id);
+        
+        const user = await prisma.user.findUnique({
+            where: { id: id }
+        });
+        
+        if (!user) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+        
+        res.status(200).json(user);
+    } catch (error) {
+        console.error('Erro no GET por ID:', error);
+        res.status(400).json({ error: error.message });
+    }
+});
+
+app.put('/usuarios/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        console.log('ID recebido:', id);
+        console.log('Dados para atualizar:', req.body);
+
+        const user = await prisma.user.update({
+            where: {
+                id: id
+            },
+            data: {
+                email: req.body.email,
+                name: req.body.name,
+                age: req.body.age
+            }
+        });
+        
+        console.log('Usuário atualizado:', user);
+        res.status(200).json(user); // Use 200 em vez de 201 para PUT
+    } catch (error) {
+        console.error('Erro no PUT:', error);
+        
+        // Tratamento específico para registro não encontrado
+        if (error.code === 'P2025') {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+        
+        res.status(400).json({ error: error.message });
+    }
+});
+
+// rotas sem parametro depois
+
+app.get('/usuarios/', async (req, res) => {
+    try {
+        console.log('Buscando usuários no banco...');
+        const users = await prisma.user.findMany();
+        console.log('Usuários encontrados:', users);
+        console.log('Quantidade de usuários:', users.length);
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Erro no GET:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.post('/usuarios', async (req, res) => {
     try {
         console.log('Dados recebidos no POST:', req.body);
@@ -48,19 +118,6 @@ app.post('/usuarios', async (req, res) => {
     } catch (error) {
         console.error('Erro no POST:', error);
         res.status(400).json({ error: error.message });
-    }
-});
-
-app.get('/usuarios', async (req, res) => {
-    try {
-        console.log('Buscando usuários no banco...');
-        const users = await prisma.user.findMany();
-        console.log('Usuários encontrados:', users);
-        console.log('Quantidade de usuários:', users.length);
-        res.status(200).json(users);
-    } catch (error) {
-        console.error('Erro no GET:', error);
-        res.status(500).json({ error: error.message });
     }
 });
 
