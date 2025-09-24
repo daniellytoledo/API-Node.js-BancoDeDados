@@ -112,13 +112,30 @@ app.delete('/usuarios/:id', async (req, res) => {
 // rotas sem parametro
 app.get('/usuarios/', async (req, res) => {
     try {
-        console.log('Buscando usuários no banco...');
-        const users = await prisma.user.findMany();
-        console.log('Usuários encontrados:', users);
-        console.log('Quantidade de usuários:', users.length);
-        res.status(200).json(users);
+        console.log('Query parameters:', req.query);
+        
+        if (req.query.age) {
+            console.log('Buscando idade que CONTÉM:', req.query.age);
+            
+            // Busca parcial (contém o número)
+            const users = await prisma.user.findMany({
+                where: {
+                    age: {
+                        contains: req.query.age
+                    }
+                }
+            });
+            
+            console.log('Usuários encontrados:', users.length);
+            return res.status(200).json(users);
+        }
+        
+        const allUsers = await prisma.user.findMany();
+        console.log('Todos os usuários:', allUsers.length);
+        res.status(200).json(allUsers);
+        
     } catch (error) {
-        console.error('Erro no GET:', error);
+        console.error('Erro:', error);
         res.status(500).json({ error: error.message });
     }
 });
