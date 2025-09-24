@@ -1,10 +1,13 @@
 const express = require('express'); /* importando o express para o código */
 
-const app = express () /* criando uma função para o express, pois é o que os criados do express recomendam */
+ /* criando uma função para o express, pois é o que os criados do express recomendam */
+const app = express ()
+app.use(express.json()) /* avisando o express que estamos usando json */
 
 const users = []
 
 app.post('/usuarios', (req, res) => {
+    users.push(req.body)
     res.send('Ok, post')
 })
 
@@ -26,7 +29,7 @@ E junto com essa rota vamos utilizar request e response para dizer ao código qu
 */
 
 app.get('/usuarios', (req, res) => {
-    res.send('Ok, deu bom!')
+    res.json(users)
 })
 
 /* informando a porta que iremos usar e para testar o que escrevemos em cima, podemos ir no navegador e digitar o caminho para verificarmos se está tudo funcionando: localhost:3000/usuarios 
@@ -36,4 +39,8 @@ o computador por modo padrão, ele sempre vai acessar o localhost pelo método G
 
 app.listen(3000) 
 
-/* Agora podemos criar nossa API de usuários (criar, listar, editar e deletar) */
+/* 
+Agora podemos criar nossa API de usuários (criar, listar, editar e deletar).
+E isso funciona de que forma? iremos usar Query Params (consultas), e Route Params.  Quando usamos o GET, o link do navegador pode mostrar vários informações no query params. Já no route params, são informações específicas como acessar o perfil de tal usuário, editar e deletar.
+ */
+
