@@ -56,6 +56,7 @@ app.get('/usuarios/:id', async (req, res) => {
     }
 });
 
+// atualizar usuário
 app.put('/usuarios/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -75,11 +76,30 @@ app.put('/usuarios/:id', async (req, res) => {
         });
         
         console.log('Usuário atualizado:', user);
-        res.status(200).json(user); // Use 200 em vez de 201 para PUT
+        res.status(200).json(user);
     } catch (error) {
         console.error('Erro no PUT:', error);
+        res.status(400).json({ error: error.message }); 
+    }
+});
+
+// DELETE - Deletar usuário
+app.delete('/usuarios/:id', async (req, res) => {
+    try {
+        const { id } = req.params;     
         
-        // Tratamento específico para registro não encontrado
+        console.log('Tentando deletar usuário com ID:', id);
+        
+        const user = await prisma.user.delete({
+            where: { id: id }
+        });
+        
+        console.log('Usuário deletado com sucesso:', user);
+        res.status(200).json({ message: 'Usuário deletado', user });
+        
+    } catch (error) {
+        console.error('Erro ao deletar:', error);
+
         if (error.code === 'P2025') {
             return res.status(404).json({ error: 'Usuário não encontrado' });
         }
@@ -88,8 +108,8 @@ app.put('/usuarios/:id', async (req, res) => {
     }
 });
 
-// rotas sem parametro depois
 
+// rotas sem parametro
 app.get('/usuarios/', async (req, res) => {
     try {
         console.log('Buscando usuários no banco...');
@@ -138,4 +158,3 @@ E isso funciona de que forma? iremos usar Query Params (consultas), e Route Para
 /* 
 O outro passo é criar uma conta no MongoDB e baixar o Prisma. Ao instalar o Prisma, ele cria um arquivo chamado env. Neste arquivo iremos colocar o link do banco de dados do Mongo.
 */
-
