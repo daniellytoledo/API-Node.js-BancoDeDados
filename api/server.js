@@ -1,6 +1,8 @@
 import express from 'express';
 import pkg from '@prisma/client';
+import cors from 'cors'
 const { PrismaClient } = pkg;
+
 
 const prisma = new PrismaClient();
 const app = express (); /* criando uma função para o express, pois é o que os criados do express recomendam */
@@ -27,6 +29,11 @@ HTTP Status
 4xx - erro cliente (front-end)
 5xx - erro servidor (back-end)
 */
+
+app.use(cors({
+    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'],
+    credentials: true
+}));
 
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);

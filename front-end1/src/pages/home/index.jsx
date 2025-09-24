@@ -1,21 +1,25 @@
+import { useEffect, useState } from 'react'
 import './styles.css'
 import Lixeira1 from '../../assets/lixeira1.png'
+import api from '../../services/api'
+
 
 function Home() {
-  const users = [
-    {
-      id: '97329371',
-      name: 'Julia',
-      age: 33,
-      email: 'julia@email.com'
-    },
-    {
-      id: '98342984',
-      name: 'Malaica',
-      age: 33,
-      email: 'mama@email.com',
-    },
-  ]
+    const [users, setUsers] = useState([])  // armazenar usuários
+
+    async function getUsers() {
+        try {
+            const response = await api.get('/usuarios')
+            setUsers(response.data)  // Armazena os dados no estado
+            console.log('Usuários carregados:', response.data)
+        } catch (error) {
+            console.error('Erro ao buscar usuários:', error)
+        }
+  }
+
+  useEffect(() => {
+    getUsers()
+  }, [])
 
   return (
     <div className='container'>
