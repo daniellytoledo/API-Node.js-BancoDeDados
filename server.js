@@ -114,28 +114,23 @@ app.get('/usuarios/', async (req, res) => {
     try {
         console.log('Query parameters:', req.query);
         
-        if (req.query.age) {
-            console.log('Buscando idade que CONTÉM:', req.query.age);
-            
-            // Busca parcial (contém o número)
-            const users = await prisma.user.findMany({
-                where: {
-                    age: {
-                        contains: req.query.age
-                    }
-                }
-            });
-            
-            console.log('Usuários encontrados:', users.length);
-            return res.status(200).json(users);
-        }
+        // Criar filtro dinamicamente
+        const filters = {};
+        if (req.query.name) filters.name = req.query.name;
+        if (req.query.email) filters.email = req.query.email;
+        if (req.query.age) filters.age = req.query.age;
         
-        const allUsers = await prisma.user.findMany();
-        console.log('Todos os usuários:', allUsers.length);
-        res.status(200).json(allUsers);
+        console.log('Filtros aplicados:', filters);
+        
+        const users = await prisma.user.findMany({
+            where: Object.keys(filters).length > 0 ? filters : {}
+        });
+        
+        console.log('Usuários encontrados:', users.length);
+        res.status(200).json(users);
         
     } catch (error) {
-        console.error('Erro:', error);
+        console.error('Erro no GET:', error);
         res.status(500).json({ error: error.message });
     }
 });
