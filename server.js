@@ -1,6 +1,12 @@
-import express from 'express' /* importando o express para o código */
+const express = require('express'); /* importando o express para o código */
 
 const app = express () /* criando uma função para o express, pois é o que os criados do express recomendam */
+
+const users = []
+
+app.post('/usuarios', (req, res) => {
+    res.send('Ok, post')
+})
 
 /* 
 Agora vamos criar uma rota, ou seja, uma conversa entre o front-end e o back-end, usando HTTP. 
@@ -23,7 +29,11 @@ app.get('/usuarios', (req, res) => {
     res.send('Ok, deu bom!')
 })
 
-/* informando a porta que iremos usar e para testar o que escrevemos em cima, podemos ir no navegador e digitar o caminho para verificarmos se está tudo funcionando: localhost:3000/usuarios */
+/* informando a porta que iremos usar e para testar o que escrevemos em cima, podemos ir no navegador e digitar o caminho para verificarmos se está tudo funcionando: localhost:3000/usuarios 
+
+o computador por modo padrão, ele sempre vai acessar o localhost pelo método GET, mas se tivessemos usado outro método, daria erro no navegador, então podemos instalar uma ferramente chamada Thunder Client pelas extensões do vs code, e nela iremos fazer um new request get http://localhost:3000/usuarios para que o navegador consiga nos mostrar todos os métodos http usado.
+*/
 
 app.listen(3000) 
 
+/* Agora podemos criar nossa API de usuários (criar, listar, editar e deletar) */
