@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/daniellytoledo/API-Node.js-BancoDeDados#readme",
   "dependencies": {
+    "@prisma/client": "^6.16.2",
     "express": "^5.1.0"
   },
   "devDependencies": {

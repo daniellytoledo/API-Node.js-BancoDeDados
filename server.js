@@ -49,3 +49,6 @@ Agora podemos criar nossa API de usuários (criar, listar, editar e deletar).
 E isso funciona de que forma? iremos usar Query Params (consultas), e Route Params.  Quando usamos o GET, o link do navegador pode mostrar vários informações no query params. Já no route params, são informações específicas como acessar o perfil de tal usuário, editar e deletar.
 */
 
+/* 
+O outro passo é criar uma conta no MongoDB e baixar o Prisma. Ao instalar o Prisma, ele cria um arquivo chamado env. Neste arquivo iremos colocar o link do banco de dados do Mongo.
+*/
