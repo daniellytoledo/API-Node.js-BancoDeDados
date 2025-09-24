@@ -6,11 +6,6 @@ app.use(express.json()) /* avisando o express que estamos usando json */
 
 const users = []
 
-app.post('/usuarios', (req, res) => {
-    users.push(req.body)
-    res.send('Ok, post')
-})
-
 /* 
 Agora vamos criar uma rota, ou seja, uma conversa entre o front-end e o back-end, usando HTTP. 
 Podemos usar alguns comandos como:
@@ -22,14 +17,24 @@ Delete = deletar
 
 E as rotas precisam de:
 1- tipo de rota / método HTTP
-2- endereço (www.qualquersite.com/usuarios) o usuario é o endereço, neste caso
+2- endereço (www.qualquersite.com/usuarios) o usuario é o endereço, neste caso.
 
-Então, vamos iniciar com uma rota chamda get para listar os usuarios e o endereço que será 'usuarios'.
+Então, vamos iniciar com uma rota chamada get para listar os usuarios e o endereço que será 'usuarios'.
 E junto com essa rota vamos utilizar request e response para dizer ao código que iremos fazer uma requisição e que também queremos uma resposta desta requisição.
+
+HTTP Status
+2xx - sucesso
+4xx - erro cliente (front-end)
+5xx - erro servidor (back-end)
 */
 
+app.post('/usuarios', (req, res) => {
+    users.push(req.body)
+    res.status(201).json(req.body)
+})
+
 app.get('/usuarios', (req, res) => {
-    res.json(users)
+    res.status(200).json(users)
 })
 
 /* informando a porta que iremos usar e para testar o que escrevemos em cima, podemos ir no navegador e digitar o caminho para verificarmos se está tudo funcionando: localhost:3000/usuarios 
@@ -42,5 +47,5 @@ app.listen(3000)
 /* 
 Agora podemos criar nossa API de usuários (criar, listar, editar e deletar).
 E isso funciona de que forma? iremos usar Query Params (consultas), e Route Params.  Quando usamos o GET, o link do navegador pode mostrar vários informações no query params. Já no route params, são informações específicas como acessar o perfil de tal usuário, editar e deletar.
- */
+*/
 
