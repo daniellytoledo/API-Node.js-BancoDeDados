@@ -1,10 +1,10 @@
-const express = require('express'); /* importando o express para o código */
+import express from 'express';
+import pkg from '@prisma/client';
+const { PrismaClient } = pkg;
 
- /* criando uma função para o express, pois é o que os criados do express recomendam */
-const app = express ()
-app.use(express.json()) /* avisando o express que estamos usando json */
-
-const users = []
+const prisma = new PrismaClient();
+const app = express (); /* criando uma função para o express, pois é o que os criados do express recomendam */
+app.use(express.json()); /* avisando o express que estamos usando json */
 
 /* 
 Agora vamos criar uma rota, ou seja, uma conversa entre o front-end e o back-end, usando HTTP. 
@@ -28,21 +28,50 @@ HTTP Status
 5xx - erro servidor (back-end)
 */
 
-app.post('/usuarios', (req, res) => {
-    users.push(req.body)
-    res.status(201).json(req.body)
-})
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+});
 
-app.get('/usuarios', (req, res) => {
-    res.status(200).json(users)
-})
+app.post('/usuarios', async (req, res) => {
+    try {
+        console.log('Dados recebidos no POST:', req.body);
+        const user = await prisma.user.create({
+            data: {
+                email: req.body.email,
+                name: req.body.name,
+                age: req.body.age
+            }
+        });
+        console.log('Usuário criado no banco:', user);
+        res.status(201).json(user);
+    } catch (error) {
+        console.error('Erro no POST:', error);
+        res.status(400).json({ error: error.message });
+    }
+});
+
+app.get('/usuarios', async (req, res) => {
+    try {
+        console.log('Buscando usuários no banco...');
+        const users = await prisma.user.findMany();
+        console.log('Usuários encontrados:', users);
+        console.log('Quantidade de usuários:', users.length);
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Erro no GET:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
 
 /* informando a porta que iremos usar e para testar o que escrevemos em cima, podemos ir no navegador e digitar o caminho para verificarmos se está tudo funcionando: localhost:3000/usuarios 
 
 o computador por modo padrão, ele sempre vai acessar o localhost pelo método GET, mas se tivessemos usado outro método, daria erro no navegador, então podemos instalar uma ferramente chamada Thunder Client pelas extensões do vs code, e nela iremos fazer um new request get http://localhost:3000/usuarios para que o navegador consiga nos mostrar todos os métodos http usado.
 */
 
-app.listen(3000) 
+app.listen(3000, () => {
+    console.log('Servidor rodando na porta 3000');
+});
 
 /* 
 Agora podemos criar nossa API de usuários (criar, listar, editar e deletar).
@@ -52,3 +81,4 @@ E isso funciona de que forma? iremos usar Query Params (consultas), e Route Para
 /* 
 O outro passo é criar uma conta no MongoDB e baixar o Prisma. Ao instalar o Prisma, ele cria um arquivo chamado env. Neste arquivo iremos colocar o link do banco de dados do Mongo.
 */
+
