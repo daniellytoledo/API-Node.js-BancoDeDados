@@ -1,5 +1,5 @@
 # API-Node.js-BancoDeDados
 
-My personal project creating a API, using Prisma, Node.js, Thunder Client and JSON.
+My personal project creating a API, using Prisma, JavaScript, MongoDB, Thunder Client.
 
-Back.End completed, now I'm gonna build the Front-End with React.
+https://daniellytoledo.github.io/API-Node.js-BancoDeDados/
