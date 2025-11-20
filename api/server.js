@@ -136,6 +136,21 @@ app.post('/usuarios', async (req, res) => {
     }
 });
 
+// Rota raiz para verificar se a API está online
+app.get('/', (req, res) => {
+    res.json({ 
+        message: 'API de Usuários está funcionando! 🚀',
+        endpoints: {
+            getUsers: 'GET /usuarios',
+            getUserById: 'GET /usuarios/:id',
+            createUser: 'POST /usuarios',
+            updateUser: 'PUT /usuarios/:id',
+            deleteUser: 'DELETE /usuarios/:id'
+        },
+        timestamp: new Date().toISOString()
+    });
+});
+
 // MUDANÇA IMPORTANTE PARA PRODUÇÃO:
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
