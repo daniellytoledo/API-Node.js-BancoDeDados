@@ -1,37 +1,16 @@
 import express from 'express';
 import pkg from '@prisma/client';
-import cors from 'cors'
+import cors from 'cors';
 const { PrismaClient } = pkg;
 
-
 const prisma = new PrismaClient();
-const app = express (); /* criando uma função para o express, pois é o que os criados do express recomendam */
-app.use(express.json()); /* avisando o express que estamos usando json */
+const app = express();
 
-/* 
-Agora vamos criar uma rota, ou seja, uma conversa entre o front-end e o back-end, usando HTTP. 
-Podemos usar alguns comandos como:
-Get = listar
-Post = criar
-Put = editar vários
-Patch = editar um
-Delete = deletar
+app.use(express.json());
 
-E as rotas precisam de:
-1- tipo de rota / método HTTP
-2- endereço (www.qualquersite.com/usuarios) o usuario é o endereço, neste caso.
-
-Então, vamos iniciar com uma rota chamada get para listar os usuarios e o endereço que será 'usuarios'.
-E junto com essa rota vamos utilizar request e response para dizer ao código que iremos fazer uma requisição e que também queremos uma resposta desta requisição.
-
-HTTP Status
-2xx - sucesso
-4xx - erro cliente (front-end)
-5xx - erro servidor (back-end)
-*/
-
+// CORS para produção - aceita qualquer origem
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'],
+    origin: true,
     credentials: true
 }));
 
@@ -39,8 +18,6 @@ app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
     next();
 });
-
-// rotas com parametro primeiro
 
 // GET por ID específico
 app.get('/usuarios/:id', async (req, res) => {
@@ -115,13 +92,11 @@ app.delete('/usuarios/:id', async (req, res) => {
     }
 });
 
-
-// rotas sem parametro
+// GET todos os usuários
 app.get('/usuarios/', async (req, res) => {
     try {
         console.log('Query parameters:', req.query);
         
-        // Criar filtro dinamicamente
         const filters = {};
         if (req.query.name) filters.name = req.query.name;
         if (req.query.email) filters.email = req.query.email;
@@ -142,6 +117,7 @@ app.get('/usuarios/', async (req, res) => {
     }
 });
 
+// POST criar usuário
 app.post('/usuarios', async (req, res) => {
     try {
         console.log('Dados recebidos no POST:', req.body);
@@ -160,20 +136,8 @@ app.post('/usuarios', async (req, res) => {
     }
 });
 
-/* informando a porta que iremos usar e para testar o que escrevemos em cima, podemos ir no navegador e digitar o caminho para verificarmos se está tudo funcionando: localhost:3000/usuarios 
-
-o computador por modo padrão, ele sempre vai acessar o localhost pelo método GET, mas se tivessemos usado outro método, daria erro no navegador, então podemos instalar uma ferramente chamada Thunder Client pelas extensões do vs code, e nela iremos fazer um new request get http://localhost:3000/usuarios para que o navegador consiga nos mostrar todos os métodos http usado.
-*/
-
-app.listen(3000, () => {
-    console.log('Servidor rodando na porta 3000');
+// MUDANÇA IMPORTANTE PARA PRODUÇÃO:
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
-
-/* 
-Agora podemos criar nossa API de usuários (criar, listar, editar e deletar).
-E isso funciona de que forma? iremos usar Query Params (consultas), e Route Params.  Quando usamos o GET, o link do navegador pode mostrar vários informações no query params. Já no route params, são informações específicas como acessar o perfil de tal usuário, editar e deletar.
-*/
-
-/* 
-O outro passo é criar uma conta no MongoDB e baixar o Prisma. Ao instalar o Prisma, ele cria um arquivo chamado env. Neste arquivo iremos colocar o link do banco de dados do Mongo.
-*/
